@@ -3,7 +3,9 @@ import chess
 import chess.pgn
 import chess.engine
 from datetime import datetime, timedelta
+
 from faker import Faker
+from stockfish import Stockfish
 
 from database.database_manager import DatabaseManager
 from entitiy.game import Game
@@ -16,6 +18,7 @@ class GameDataGenerator:
         self.faker = Faker()
         self.database_manager = DatabaseManager([CHESS_OPENINGS_DATABASE_PATH, GENERATED_DATA_DATABASE_PATH])
         self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
+        self.stockfish = Stockfish(path=STOCKFISH_PATH)
 
     def generate_games_list(self, games_number):
         games = []
@@ -48,6 +51,9 @@ class GameDataGenerator:
         if player1data and player2data:
             date = self.generate_random_game_date(player1data[3], player2data[3])
 
+        player1_elo = player1data[5]
+        player2_elo = player2data[5]
+
         game = chess.pgn.Game()
         game.headers["Event"] = self.faker.catch_phrase()
         game.headers["Site"] = self.faker.domain_word() + "chess.com"
@@ -66,13 +72,20 @@ class GameDataGenerator:
             board.push(move)
             game.add_variation(move)
 
+        self.stockfish.set_position(uci_moves)
+
         while not board.is_game_over():
-            result = self.engine.play(board, chess.engine.Limit(time=0.1))
-            move = result.move
+            if board.turn == chess.WHITE:
+                self.stockfish.set_elo_rating(player1_elo)
+            else:
+                self.stockfish.set_elo_rating(player2_elo)
+
+            uci_move = self.stockfish.get_best_move(wtime=1000, btime=1000)
+            move = chess.Move.from_uci(uci_move)
             board.push(move)
             game.add_variation(move)
-            uci_move = board.uci(move)
             uci_moves.append(uci_move)
+            self.stockfish.set_position(uci_moves)
 
         result = board.result()
         pgn_moves, moves_number = self.convert_uci_to_pgn_and_count_move_number(uci_moves)
