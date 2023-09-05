@@ -59,11 +59,12 @@ class DatabaseManager:
     def insert_games(self, database_path, games):
         cursor = self.cursors.get(database_path)
         for game in games:
+            date_without_time = game.date.date()
             cursor.execute('''
                 INSERT INTO games (opening_id, player1_id, player2_id, pgn, result, moves_number, date)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (game.opening_code, game.player1_id, game.player2_id, game.pgn, game.result, game.moves_number,
-                  game.date))
+                  date_without_time))
             cursor.connection.commit()
 
     def generate_query_to_insert_players_to_mysql(self, database_path, output_file_path):
