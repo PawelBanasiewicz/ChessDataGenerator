@@ -1,0 +1,5 @@
+chess==1.0.3
+chess.engine==1.0.0
+Faker==9.10.2
+python-chess==1.999
+python-dateutil==2.8.2
