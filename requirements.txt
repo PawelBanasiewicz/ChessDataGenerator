@@ -1,4 +1,4 @@
 chess==1.10.0
-Faker==9.10.2
+Faker==19.3.1
 python-chess==1.999
 python-dateutil==2.8.2
