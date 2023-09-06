@@ -3,7 +3,7 @@ from database_manager import DatabaseManager
 from games_data_generator import GameDataGenerator
 
 if __name__ == '__main__':
-    games_number = 200
+    games_number = 20_000
 
     games_data_generator = GameDataGenerator()
     games_list = games_data_generator.generate_games_list(games_number)
