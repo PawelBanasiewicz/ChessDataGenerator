@@ -21,7 +21,7 @@ class GameDataGenerator:
         games = []
         with open(GAMES_ON_THE_FLY_OUTPUT_PATH, "w") as file:
             file.write(
-                "INSERT INTO games (opening_code, player1_id, player2_id, pgn, result, moves_number, date)\nVALUES\n")
+                "INSERT INTO games (opening_id, player1_id, player2_id, pgn, result, moves_number, date)\nVALUES\n")
 
             line_last_char = ','
             for i in range(games_number):
