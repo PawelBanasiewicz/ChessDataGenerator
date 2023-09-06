@@ -6,8 +6,8 @@ import chess.engine
 import chess.pgn
 from faker import Faker
 
-from constants import STOCKFISH_PATH, GAMES_ON_THE_FLY_OUTPUT_PATH, CHESS_OPENINGS_DATABASE_PATH, \
-    GENERATED_DATA_DATABASE_PATH
+from constants import GAMES_ON_THE_FLY_OUTPUT_PATH, CHESS_OPENINGS_DATABASE_PATH, \
+    GENERATED_DATA_DATABASE_PATH, STOCKFISH_LINUX_PATH
 from database_manager import DatabaseManager
 from game import Game
 
@@ -16,7 +16,7 @@ class GameDataGenerator:
     def __init__(self):
         self.faker = Faker()
         self.database_manager = DatabaseManager([CHESS_OPENINGS_DATABASE_PATH, GENERATED_DATA_DATABASE_PATH])
-        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
+        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_LINUX_PATH)
 
     def generate_games_list(self, games_number):
         games = []
