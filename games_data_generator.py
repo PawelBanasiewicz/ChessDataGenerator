@@ -36,8 +36,7 @@ class GameDataGenerator:
                     f"({game.opening_code}, {game.player1_id}, {game.player2_id}, '{game.pgn}', '{game.result}', "
                     f"{game.moves_number}, '{formatted_date}'){line_last_char}\n")
 
-                if i % 50 == 0:
-                    print(i)
+                print(i)
 
         file.close()
         return games
