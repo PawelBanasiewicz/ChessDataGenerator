@@ -6,7 +6,7 @@ import chess.engine
 import chess.pgn
 from faker import Faker
 
-from constants import GAMES_ON_THE_FLY_OUTPUT_PATH, CHESS_OPENINGS_DATABASE_PATH, \
+from constants import CHESS_OPENINGS_DATABASE_PATH, \
     GENERATED_DATA_DATABASE_PATH, STOCKFISH_LINUX_PATH
 from database_manager import DatabaseManager
 from game import Game
@@ -16,30 +16,24 @@ class GameDataGenerator:
     def __init__(self):
         self.faker = Faker()
         self.database_manager = DatabaseManager([CHESS_OPENINGS_DATABASE_PATH, GENERATED_DATA_DATABASE_PATH])
-        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_LINUX_PATH, timeout=60)
+        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_LINUX_PATH, timeout=90)
 
     def generate_games_list(self, games_number):
         games = []
-        with open(GAMES_ON_THE_FLY_OUTPUT_PATH, "w") as file:
-            file.write(
-                "INSERT INTO games (opening_id, player1_id, player2_id, pgn, result, moves_number, date)\nVALUES\n")
+        for i in range(games_number):
+            game = self.generate_game()
+            games.append(game)
 
-            line_last_char = ','
-            for i in range(games_number):
-                game = self.generate_game()
-                games.append(game)
+            formatted_date = game.date.strftime("%Y-%m-%d")
 
-                formatted_date = game.date.strftime("%Y-%m-%d")
-                if i == len(games):
-                    line_last_char = ';'
-                file.write(
-                    f"({game.opening_code}, {game.player1_id}, {game.player2_id}, '{game.pgn}', '{game.result}', "
-                    f"{game.moves_number}, '{formatted_date}'){line_last_char}\n")
+            self.database_manager.cursors.get(GENERATED_DATA_DATABASE_PATH).execute(
+                "INSERT INTO games (opening_id, player1_id, player2_id, pgn, result, moves_number, date) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [game.opening_id, game.player1_id, game.player2_id, game.pgn, game.result, game.moves_number,
+                 formatted_date])
 
-                print(i)
-
-        file.close()
-        return games
+            self.database_manager.connections.get(GENERATED_DATA_DATABASE_PATH).commit()
+            print(i)
 
     def generate_game(self):
         player1data, player2data = self.find_right_players(GENERATED_DATA_DATABASE_PATH)
