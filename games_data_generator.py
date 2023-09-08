@@ -16,7 +16,7 @@ class GameDataGenerator:
     def __init__(self):
         self.faker = Faker()
         self.database_manager = DatabaseManager([CHESS_OPENINGS_DATABASE_PATH, GENERATED_DATA_DATABASE_PATH])
-        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_LINUX_PATH)
+        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_LINUX_PATH, time=9999)
 
     def generate_games_list(self, games_number):
         for i in range(games_number):
