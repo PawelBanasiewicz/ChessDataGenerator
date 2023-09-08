@@ -1,8 +1,9 @@
 import random
-import chess
-import chess.pgn
-import chess.engine
 from datetime import datetime, timedelta
+
+import chess
+import chess.engine
+import chess.pgn
 from faker import Faker
 
 from database.database_manager import DatabaseManager
@@ -42,10 +43,12 @@ class GameDataGenerator:
         return games
 
     def generate_game(self):
-        player1data, player2data = self.find_right_players(GENERATED_DATA_DATABASE_PATH)
+        player1data = None
+        player2data = None
         date = None
 
-        if player1data and player2data:
+        while player1data is None or player2data is None or date is None:
+            player1data, player2data = self.find_right_players(GENERATED_DATA_DATABASE_PATH)
             date = self.generate_random_game_date(player1data[3], player2data[3])
 
         game = chess.pgn.Game()
