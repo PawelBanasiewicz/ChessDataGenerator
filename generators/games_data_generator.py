@@ -49,7 +49,8 @@ class GameDataGenerator:
 
         while player1data is None or player2data is None or date is None:
             player1data, player2data = self.find_right_players(GENERATED_DATA_DATABASE_PATH)
-            date = self.generate_random_game_date(player1data[3], player2data[3])
+            if player1data and player2data:
+                date = self.generate_random_game_date(player1data[3], player2data[3])
 
         game = chess.pgn.Game()
         game.headers["Event"] = self.faker.catch_phrase()

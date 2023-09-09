@@ -3,7 +3,7 @@ from generators.games_data_generator import GameDataGenerator
 from utils.constants import GENERATED_DATA_DATABASE_PATH, GAMES_OUTPUT_PATH
 
 if __name__ == '__main__':
-    games_number = 400
+    games_number = 1000
 
     games_data_generator = GameDataGenerator()
     games_list = games_data_generator.generate_games_list(games_number)
